@@ -1,3 +1,4 @@
+
 const mainModule = () => {
   // Создаем переменную, в которую положим кнопку меню
   let menuToggle = document.querySelector('#menu-toggle');
