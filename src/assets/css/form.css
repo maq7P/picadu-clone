@@ -84,3 +84,10 @@
     text-transform: uppercase;
     text-align: center;
 }
+.a{
+    position: relative;
+    top: 4px;
+    right: 4px;
+    width: 40px;
+    background-color: rgb(233, 113, 113)
+}

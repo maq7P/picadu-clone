@@ -78,7 +78,7 @@ class FromElement extends SetUser{
         this.deleteInteredText('.login-form__input')
         this.commonSubmit('SING_UP')
         this.onClick(this._generateFormLogIn, this.animation)
-        // this.progressPassword(document.querySelector('[name="password"]'))
+        this.progressPassword(document.querySelector('[name="password"]'))
     }
     deleteInteredText(inputClass){
         const inputs = document.querySelectorAll(inputClass)
@@ -130,11 +130,87 @@ class FromElement extends SetUser{
             this.render(callback, this.animation)
         })
     }
-    // progressPassword(passwordElement){
-    //     passwordElement.addEventListener('input', (e) => {
-    //         console.log(e.target.value)
-    //     })
-    // }
+    progressPassword(passwordElement){
+        function validPassword(password) {
+            let anySimbols = /.{9,}/
+            let anySepcialSimbols = /\W\D{1,}/
+            let anyBigLetter = /[A-Z]{1,}/
+            let anyDigits = /[0-9]{3,}/
+            let anyLetters = /[a-z]{3,}/
+
+            if (anyDigits.test(password) && anyLetters.test(password) &&
+                anyBigLetter.test(password) && anySimbols.test(password) &&
+                anySepcialSimbols.test(password)) {
+                return 'very_good'
+            }
+            if (anyDigits.test(password) && anyLetters.test(password) &&
+                anyBigLetter.test(password) && anySimbols.test(password)) {
+                return 'good'
+            }
+            if (anyDigits.test(password) && anyLetters.test(password)){
+                return 'weak'
+            } else{
+                return 'very_weak'
+            }
+            
+            
+        }
+
+        passwordElement.addEventListener('focus', () => {
+            if (!passwordElement.value && !document.querySelector('.progressPasword')) {
+                const progressPasword = document.createElement('div')
+                progressPasword.classList.add('progressPasword')
+                progressPasword.style.cssText = `
+                        position: absolute;
+                        top: 12px;
+                        right: 7px;
+                        width: 50px;
+                        background-color: #e5e5e5;
+                        height: 5px;
+                        border-radius: 4px;
+                        z-index: 1;
+                `;
+                const currentProgress = document.createElement('div')
+                currentProgress.classList.add('currentProgress')
+                currentProgress.style.cssText = `
+                        position: absolute;
+                        top: 12px;
+                        background-color: red;
+                        height: 5px;
+                        border-radius: 4px;
+                        z-index: 10;
+                `;
+                passwordElement.insertAdjacentElement('afterend', progressPasword)
+                passwordElement.insertAdjacentElement('afterend', currentProgress)
+            }
+        })
+        
+        passwordElement.addEventListener('input', (e) => {
+            // width + right = 57
+            const currentProgress = document.querySelector('.currentProgress')
+            switch (validPassword(e.target.value)) {
+                case 'very_weak':
+                    currentProgress.style.width = '5px';
+                    currentProgress.style.right = '52px';
+                    break;
+                case 'weak':
+                    currentProgress.style.width = '20px';
+                    currentProgress.style.right = '37px';
+                    currentProgress.style.backgroundColor = 'rgb(233, 113, 113)';
+                    break;
+                case 'good':
+                    currentProgress.style.width = '35px';
+                    currentProgress.style.right = '22px'; 
+                    currentProgress.style.backgroundColor = '#fa8c16'
+                    break;
+                case 'very_good':
+                    currentProgress.style.width = '50px';
+                    currentProgress.style.right = '7px';
+                    currentProgress.style.backgroundColor = 'green'
+                    break;
+            }
+        })
+    }
 
 
 
