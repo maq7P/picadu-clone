@@ -1,0 +1,145 @@
+import SetUser from './SetUser'
+class FromElement extends SetUser{
+    constructor({
+            login,
+            singUp,
+            animation
+        }) {
+        super()
+        this.inputsLoginArr = login;
+        this.inputsSingupArr = singUp;
+        this.animation = animation;
+        this.toggleElements = ['.login', '.user', '.sidebar-nav', '.button-new-post']
+    }
+    _generateloginInputs(inputsArr) {
+        let inputs = '';
+        inputsArr.forEach(obj => {
+            for (let i = 0; i < obj.count; i++){
+                inputs +=
+                    `
+                    <div class="login-form__input-block">
+                        <input 
+                            name=${obj.name}
+                            type=${obj.type}
+                            placeholder=${obj.placeholder}
+                            minlength="3"
+                            class="login-form__input"
+                            required
+                        >
+                        <span class="flex none">×</span>
+                    </div>
+                `
+            }
+        });
+        return inputs;
+    }
+    _generateFormLogIn(animation){
+        document.querySelector('.sidebar')
+            .insertAdjacentHTML('afterbegin',
+                `
+                    <div class="card login">
+                        <div class="${animation}">
+                            <h2>Авторизация</h2>
+                            <form class="login-form">
+                                <div class="login-inputs">
+                                    ${this._generateloginInputs(this.inputsLoginArr)}
+                                </div>
+                                <span class="login-form__forget">Забыли пароль?</span>
+                                <button type="submit" class="login-form__btn">Войти</button>
+                                <span class="login-form__singup">РЕГИСТРАЦИЯ</span>
+                            </form>
+                        </div>
+                    </div>
+                `
+            )
+            this.deleteInteredText('.login-form__input')
+            // this.submit()
+            this.commonSubmit('LOG_IN')
+            this.onClick(this._generateFormSingup, this.animation)
+    }
+    _generateFormSingup(animation) {
+        document.querySelector('.sidebar')
+            .insertAdjacentHTML('afterbegin',
+                `
+                    <div class="card login">
+                        <div class="${animation}">
+                            <h2>Регистрация</h2>
+                            <form class="login-form">
+                                <div class="login-inputs">
+                                    ${this._generateloginInputs(this.inputsSingupArr)}
+                                </div>
+                                <button type="submit" class="login-form__btn">Создать аккаунт</button>
+                                <span class="login-form__singup">АВТОРИЗАЦИЯ</span>
+                            </form>
+                        </div>
+                    </div>
+                `
+            )
+        this.deleteInteredText('.login-form__input')
+        this.commonSubmit('SING_UP')
+        this.onClick(this._generateFormLogIn, this.animation)
+        // this.progressPassword(document.querySelector('[name="password"]'))
+    }
+    deleteInteredText(inputClass){
+        const inputs = document.querySelectorAll(inputClass)
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                if (input.value.length > 0) {
+                    input.nextElementSibling.classList.remove('none')
+                    input.nextElementSibling.addEventListener('click', () => {
+                        input.value = ''
+                        input.nextElementSibling.classList.add('none')
+                    })
+                } else {
+                    input.nextElementSibling.classList.add('none')
+                }
+            })
+        })
+    }
+    commonSubmit(action){
+        const inputs = document.querySelectorAll('.login-form__input')
+        const loginForm = document.querySelector('.login-form')
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault()
+            let dataInputs = []
+            inputs.forEach(input => {
+                dataInputs.push({
+                    type: input.name,
+                    value: input.value
+                })
+            })
+
+            switch (action) {
+                case 'SING_UP':
+                    console.log(dataInputs);
+                    this.signUp(dataInputs, this.toggleElements)
+                    break;
+                case 'LOG_IN':
+                    this.logIn(dataInputs, this.toggleElements)
+                    break;
+                default:
+                    break;
+            }
+        })
+    }
+    onClick(callback, animation) {
+        const singupBtn = document.querySelector('.login-form__singup')
+        singupBtn.addEventListener('click', () => {
+            document.querySelector('.login').remove()
+            this.render(callback, this.animation)
+        })
+    }
+    // progressPassword(passwordElement){
+    //     passwordElement.addEventListener('input', (e) => {
+    //         console.log(e.target.value)
+    //     })
+    // }
+
+
+
+    render(callback = this._generateFormLogIn, animation='') {
+        callback.call(this, animation)
+    }
+}
+export default FromElement
